@@ -1,6 +1,60 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <tittle></tittle>
+        <tittle>Student Scores</tittle>
+        <link rel="stylesheet" href="styles.css">
+        <script src="https://d3js.org/d3.v6.min.js"></script>
+        <script src="https://d3js.org/d3-path.v2.min.js"></script>
+        <script src="https://d3js.org/d3-shape.v2.min.js"></script>
+        <script crossingin src="https://unpkg.com/react/umd/react.development.js"></script>
+        <script crossingin src="https://unpkg.com/react-dom/umd/react-dom.development.js"></script>
+        <script crossingin src="https://unpkg.com/babel-standalone/babel.js"></script>
     </head>
+    <body>
+        <h1>Let's make some charts.</h1>
+        <div id="root"></div>
+        <script type='text/babel'>
+            const margin = { top: 20, right: 20, bottom: 180, left: 40, gap: 50 };
+            const csvUrl = 'https://gist.githubusercontent.com/kapetanenver/cdfcca623bddd41213cab6ee19a1e482/raw/e36c56eb2ddcfa22aa0210a48b722ac7c667543b/student_scores_data'
+            function useData(csvPath){
+                const [dataAll, setData] = React.useState(null);
+                React.useEffect(() => {
+                    d3.csv(csvPath).then(data => {
+                        data.forEach(d => {
+                            d.gender = d.gender;
+                            d.race = d.race_ethnicity;
+                            d.parent= d.parental_level_of_education;
+                            d.lunch = d.lunch;
+                            d.prep = d.test_preparation_course;
+                            d.math = +d.math_score;
+                            d.read = +d.reading_score;
+                            d.write = +d.writing_score;
+                        });
+                        setData(data);
+                    });
+                }, []);
+                return dataAll;
+            }
+
+            const Charts = () => {
+                const dataAll = useData(csvUrl);
+                if (!dataAll) {
+                   return <pre>Loading...</pre>;
+
+                };
+                console.log(dataAll)
+                const WIDTH = 600;
+                const HEIGHT = 800;
+
+
+                return (
+                    <div>
+                    
+                    </div>        
+                )
+            }
+            const rootElement = document.getElementById('root');
+           ReactDOM.render(<Charts />, rootElement);
+        </script>
+    </body>
 </html>
