@@ -11,24 +11,28 @@
         <script crossingin src="https://unpkg.com/babel-standalone/babel.js"></script>
     </head>
     <body>
-        <h1>Let's make some charts.</h1>
+        <h1>Student Exam Scores</h1>
         <div id="root"></div>
         <script type='text/babel'>
             const margin = { top: 20, right: 20, bottom: 180, left: 40, gap: 50 };
             const csvUrl = 'https://gist.githubusercontent.com/kapetanenver/cdfcca623bddd41213cab6ee19a1e482/raw/e36c56eb2ddcfa22aa0210a48b722ac7c667543b/student_scores_data'
             function useData(csvPath){
                 const [dataAll, setData] = React.useState(null);
+                var count = 0;
                 React.useEffect(() => {
                     d3.csv(csvPath).then(data => {
                         data.forEach(d => {
+                            d.number =count;
+                            count +=1;
                             d.gender = d.gender;
-                            d.race = d.race_ethnicity;
-                            d.parent= d.parental_level_of_education;
+                            d.race_ethnicity = d.race_ethnicity;
+                            d.parental_level_of_education = d.parental_level_of_education;
                             d.lunch = d.lunch;
-                            d.prep = d.test_preparation_course;
-                            d.math = +d.math_score;
-                            d.read = +d.reading_score;
-                            d.write = +d.writing_score;
+                            d.test_preparation_course = d.test_preparation_course;
+                            d.math_score = +d.math_score;
+                            d.reading_score = +d.reading_score;
+                            d.writing_score = +d.writing_score;
+                            d.average =+ Number((d.math_score + d.writing_score +d.reading_score)/3).toFixed(2);
                         });
                         setData(data);
                     });
@@ -36,20 +40,234 @@
                 return dataAll;
             }
 
+            function Sorter(props){
+                const {data1, y_var} = props;
+                console.log(y_var)
+                if (y_var==='d.average'){
+                    data5 = data1.sort(function (a,b) {return d3.ascending(a.average , b.average);});
+                    console.log(data5);
+                }else if (y_var === 'd.math_score'){
+                    data5 = data.sort(function (a,b) {return d3.ascending(a.math_score , b.math_score);});
+                }else if (y_var === 'd.reading_score'){
+                    data5 = data.sort(function (a,b) {return d3.ascending(a.reading_score , b.reading_score);});
+                }else if (y_var==='d.writing_score'){
+                    data5 = data.sort(function (a,b) {return d3.ascending(a.writing_score , b.writing_score);});
+                };
+                return data5;
+            }
+
+            function Tooltip(props){
+                const{data, selectedNumber, selectedX, selectedY, selectedData} = props;
+                const styles2 = {
+                    left: selectedX,
+                    top: selectedY,
+                    position: 'absolute',
+                    textAlign: 'center',
+                    width: '200px',
+                    height: '100px',
+                    padding: '2px',
+                    font: '10px sans-serif',
+                    background: 'rgb(57,206,57)',
+                    border: '1px',
+                    borderRadius: '8px',
+                    pointerEvents: 'none',
+                };
+
+                if (selectedNumber === null){
+                    return <div></div>
+                }else{
+                    return (<div style={styles2}>
+                        <text> Student Number:{selectedData.number} </text>
+                        <br/>
+                        <text> Student Average Exam Score: {selectedData.average} </text>
+                        <br/>
+                        <text> Student Math Score: {selectedData.math_score} </text>
+                        <br/>
+                        <text> Student Reading Score: {selectedData.reading_score} </text>
+                        <br/>
+                        <text> Student Writing Score: {selectedData.writing_score} </text>
+                        <br/>
+                        <text> Parent Level of Education: {selectedData.parental_level_of_education}</text>
+                        <br/>
+                        <text> Race: {selectedData.race_ethnicity} </text>
+
+                        </div>)
+                }
+
+                
+
+
+            }
+
+            function BarChart(props){
+                const {data, height, width, y_var, x, y, label, selectedNumber, mouseOver, mouseOut} = props;
+                const color = d => d.number === selectedNumber ? 'red':'steelblue';
+                if (y_var==='d.average'){
+                    var data_sorted = data.sort(function (a,b) {return d3.ascending(a.average , b.average);});
+                    console.log(data_sorted);
+                }else if (y_var === 'd.math_score'){
+                    var data_sorted = data.sort(function (a,b) {return d3.ascending(a.math_score , b.math_score);});
+                }else if (y_var === 'd.reading_score'){
+                    var data_sorted = data.sort(function (a,b) {return d3.ascending(a.reading_score , b.reading_score);});
+                }else if (y_var==='d.writing_score'){
+                    var data_sorted = data.sort(function (a,b) {return d3.ascending(a.writing_score , b.writing_score);});
+                };
+                const xScale = d3.scaleBand()
+                    .range([0,width])
+                    .domain(data_sorted.map(d => {return d.number}));
+                const yScale = d3.scaleLinear()
+                    .range([height, 0])
+                    .domain([0,100]).nice(); 
+                const domain = xScale.domain();
+                const ticks = yScale.ticks();   
+                if (selectedNumber === null){
+                    return <g transform={`translate(${x}, ${y})`}>
+                        <text style={{ textAnchor:'start', fontSize:'15px'}} transform={`translate(${width/4}, -5)`}>
+                            {label}
+                        </text>
+            
+                        <line x1={0} y1={height} x2={width} y2={height} stroke={'black'} />
+                        {domain.map( tickValue => {
+                            return <g key={tickValue} transform={`translate(${xScale(tickValue)}, ${height})rotate(70)`}>
+                                </g>
+                            })}
+                        <line y2={height} stroke={'black'} />
+                        {ticks.map( tickValue =>{
+                                return <g key={tickValue} transform={`translate(-10, ${yScale(tickValue)})`}>
+                                        <line x2={10} stroke={'black'} />
+                                        <text style={{ textAnchor:'end', fontSize:'10px'}}>
+                                        {tickValue}
+                                        </text>
+                                    </g>
+                            })}
+                        {data_sorted.map(d => {
+                            return <rect key={d.number} x={xScale(d.number)} y={ eval('yScale('+ y_var +')')}
+                            width={xScale.bandwidth()} fill={'steelblue'} stroke={'black'} height={(height - eval('yScale('+ y_var +')'))}
+                            onMouseOver={()=> mouseOver(d)} onMouseOut={mouseOut}/>
+                            })} 
+                    </g>   
+                }else{
+                    return <g transform={`translate(${x}, ${y})`}>
+                        <text style={{ textAnchor:'start', fontSize:'15px'}} transform={`translate(${width/4}, -5)`}>
+                            {label}
+                        </text>
+            
+                        <line x1={0} y1={height} x2={width} y2={height} stroke={'black'} />
+                        {domain.map( tickValue => {
+                            return <g key={tickValue} transform={`translate(${xScale(tickValue)}, ${height})rotate(70)`}>
+                                </g>
+                            })}
+                        <line y2={height} stroke={'black'} />
+                        {ticks.map( tickValue =>{
+                                return <g key={tickValue} transform={`translate(-10, ${yScale(tickValue)})`}>
+                                        <line x2={10} stroke={'black'} />
+                                        <text style={{ textAnchor:'end', fontSize:'10px'}}>
+                                        {tickValue}
+                                        </text>
+                                    </g>
+                            })}
+                        {data_sorted.map(d => {
+                            return <rect key={d.number} x={xScale(d.number)} y={ eval('yScale('+ y_var +')')}
+                            width={xScale.bandwidth()} fill={color(d)} stroke={'black'} height={(height - eval('yScale('+ y_var +')'))}
+                            onMouseOver={()=> mouseOver(d)} onMouseOut={mouseOut}/>
+                            })} 
+                        {data_sorted.filter( d => d.number === selectedNumber).map(d=> {
+                            return <rect key={d.number} x={xScale(d.number)} y={eval('yScale('+ y_var +')')}
+                            width={xScale.bandwidth()} fill={color(d)} stroke={'black'} height={(height - eval('yScale('+ y_var +')'))}
+                            onMouseOver={()=> mouseOver(d)} onMouseOut={mouseOut}/>
+                            })} 
+                        </g>    
+                } 
+            }
             const Charts = () => {
                 const dataAll = useData(csvUrl);
+                const [sex, setSex] = React.useState('male');
+                const [lunch, setLunch] = React.useState('standard');
+                const [test, setTest] = React.useState('none');
+                const [selectedNumber, setSelectedNumber] = React.useState(null);
+                const [selectedX, setSelectedX] = React.useState(null);
+                const [selectedY, setSelectedY] = React.useState(null);
+                const [selectedData, setSelectedData] = React.useState(null)
+                const mouseOver = d => {
+                    setSelectedNumber(d.number);
+                    setSelectedX(event.pageX + 'px');
+                    setSelectedY(event.pageY + 'px');
+                    setSelectedData(d)
+                };
+                
+                const mouseOut = () => {
+                    setSelectedNumber(null);
+                    setSelectedX(null);
+                    setSelectedY(null);
+                    setSelectedData(null)
+                };
                 if (!dataAll) {
                    return <pre>Loading...</pre>;
 
                 };
-                console.log(dataAll)
-                const WIDTH = 600;
-                const HEIGHT = 800;
+                console.log(selectedNumber);
+                const WIDTH = 1600;
+                const HEIGHT = 1400;
+                const innerheight = HEIGHT - margin.top - margin.bottom;
+                const innerwidth = WIDTH - margin.left - margin.right; 
+
+                const changeHandler= (event) => {
+                    setSex(event.target.value);
+                };
+
+                const changeHandler2 = (event) => {
+                    setLunch(event.target.value);
+                };
+
+                const changeHandler3 = (event) => {
+                    setTest(event.target.value);
+                };
+
+                const data1 = dataAll.filter( d=> {
+                    return d.gender == sex;
+                    }); 
+
+                const data2 = data1.filter( d=> {
+                    return d.lunch == lunch;
+                    }); 
+
+                const data = data2.filter( d=> {
+                    return d.test_preparation_course == test;
+                    });     
+
+                
 
 
                 return (
                     <div>
-                    
+                        
+                        <div className="radio" onChange={changeHandler}>
+                            <input type="radio" value="male" name="gender" defaultChecked='True'/>
+                                Male
+                            <input type="radio" value="female" name='gender'/>
+                                Female
+                        </div>  
+                        <div className='radio' onChange={changeHandler2}>
+                            <input type='radio' value='standard' name='lunch' defaultChecked='True'/>
+                                Standard Lunch
+                            <input type='radio' value='free/reduced' name='lunch'/>
+                                Free/reduced Lunch  
+                        </div>    
+                        <div className="radio" onChange={changeHandler3}>
+                            <input type="radio" value="none" name='test_prep' defaultChecked='True'/>
+                                No test prep
+                            <input type="radio" value="completed" name="test_prep" />
+                                Completed Test prep    
+                        </div>
+                        <svg height={HEIGHT} width={WIDTH}>
+                            <g>
+                            <BarChart data={data} height={innerheight/4} width={innerwidth/4} y_var='d.average' x={margin.left} y={margin.top} label='Student Average Scores' selectedNumber={selectedNumber} mouseOver = {mouseOver} mouseOut={mouseOut}/>
+                            <BarChart data={data} height={innerheight/4} width={innerwidth/4} y_var='d.math_score' x={margin.left} y={innerheight/4 + margin.gap} label='Student Math Scores' selectedNumber={selectedNumber} mouseOver = {mouseOver} mouseOut={mouseOut}/>
+                            <BarChart data={data} height={innerheight/4} width={innerwidth/4} y_var='d.reading_score' x={margin.left+ innerwidth/4 +margin.gap} y={margin.top} label='Student Reading Scores' selectedNumber={selectedNumber} mouseOver = {mouseOver} mouseOut={mouseOut}/>
+                            <BarChart data={data} height={innerheight/4} width={innerwidth/4} y_var='d.writing_score' x={margin.left+ innerwidth/4 +margin.gap} y={innerheight/4 + margin.gap} label='Student Writing Scores' selectedNumber={selectedNumber} mouseOver = {mouseOver} mouseOut={mouseOut}/>
+                            </g>    
+                        </svg>   
+                        <Tooltip data={data} selectedNumber={selectedNumber} selectedX={selectedX} selectedY={selectedY} selectedData={selectedData}/> 
                     </div>        
                 )
             }
