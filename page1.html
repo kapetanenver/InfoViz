@@ -343,8 +343,8 @@
 
 
                 return (
-                    <div>
-                        
+                    <div class="grid-container">
+                        <div class="grid-radio">
                         <div className="radio" onChange={changeHandler}>
                             <input type="radio" value="male" name="gender" defaultChecked='True'/>
                                 Male
@@ -363,7 +363,9 @@
                             <input type="radio" value="completed" name="test_prep" />
                                 Completed Test prep    
                         </div>
-                        <svg height={HEIGHT} width={WIDTH}>
+                    </div>
+                        <div class="grid-charts">
+                        <svg height="100%" width="100%">
                             <g>
                             <BarChart data={data} height={innerheight/4} width={innerwidth/4} y_var='d.average' x={margin.left} y={margin.top} label='Student Average Scores' selectedNumber={selectedNumber} mouseOver = {mouseOver} mouseOut={mouseOut}/>
                             <BarChart data={data} height={innerheight/4} width={innerwidth/4} y_var='d.math_score' x={margin.left} y={innerheight/4 + margin.gap} label='Student Math Scores' selectedNumber={selectedNumber} mouseOver = {mouseOver} mouseOut={mouseOut}/>
@@ -372,8 +374,9 @@
                             </g>    
                         </svg>
                         <Tooltip data={data} selectedNumber={selectedNumber} selectedX={selectedX} selectedY={selectedY} selectedData={selectedData}/>
-
-                        <svg height={HEIGHT} width={WIDTH}>
+                    </div>
+                    <div class="grid-heatmap">
+                        <svg height="100%" width="100%">
                             <g>
                             <Heatmap
                                 data={data}
@@ -409,6 +412,7 @@
                                 label='Student Writing Scores' />
                             </g>    
                         </svg>
+                    </div>
                     </div>        
                 )
             }
