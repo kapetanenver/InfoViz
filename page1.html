@@ -344,26 +344,26 @@
 
                 return (
                     <div class="grid-container">
-                        <div class="grid-radio">
-                        <div className="radio" onChange={changeHandler}>
+
+                        <div id="grid-radio1" className="radio" onChange={changeHandler}>
                             <input type="radio" value="male" name="gender" defaultChecked='True'/>
                                 Male
                             <input type="radio" value="female" name='gender'/>
                                 Female
                         </div>  
-                        <div className='radio' onChange={changeHandler2}>
+                        <div id="grid-radio2" className='radio' onChange={changeHandler2}>
                             <input type='radio' value='standard' name='lunch' defaultChecked='True'/>
                                 Standard Lunch
                             <input type='radio' value='free/reduced' name='lunch'/>
                                 Free/reduced Lunch  
                         </div>    
-                        <div className="radio" onChange={changeHandler3}>
+                        <div id="grid-radio3" className="radio" onChange={changeHandler3}>
                             <input type="radio" value="none" name='test_prep' defaultChecked='True'/>
                                 No test prep
                             <input type="radio" value="completed" name="test_prep" />
                                 Completed Test prep    
                         </div>
-                    </div>
+
                         <div class="grid-charts">
                         <svg height="100%" width="100%">
                             <g>

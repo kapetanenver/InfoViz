@@ -20,12 +20,12 @@ div.tooltip {
     display: grid;
     grid-template-columns: repeat(12, 1fr);
     grid-template-rows: repeat(12,1fr);
-    grid-template-areas: "nav nav nav nav nav nav nav nav nav nav nav nav"
-    "chart chart chart chart chart chart chart chart chart chart chart chart"
-    "chart chart chart chart chart chart chart chart chart chart chart chart"
-    "chart chart chart chart chart chart chart chart chart chart chart chart"
-    "chart chart chart chart chart chart chart chart chart chart chart chart"
-    "chart chart chart chart chart chart chart chart chart chart chart chart"
+    grid-template-areas: ". . . nav1 nav1 nav2 nav2 nav3 nav3 . . ."
+    ". chart chart chart chart chart chart chart chart chart chart chart"
+    ". chart chart chart chart chart chart chart chart chart chart chart"
+    ". chart chart chart chart chart chart chart chart chart chart chart"
+    ". chart chart chart chart chart chart chart chart chart chart chart"
+    ". chart chart chart chart chart chart chart chart chart chart chart"
     ". . . . . . . . . . . ."
     "map map map map map map map map map map map map"
     "map map map map map map map map map map map map"
@@ -40,9 +40,24 @@ div.tooltip {
   .grid-heatmap{
     grid-area: map;
   }
-  .grid-radio{
-    grid-area: nav;
+  #grid-radio1{
+    grid-area: nav1;
     display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  #grid-radio2{
+    grid-area: nav2;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  #grid-radio3{
+    grid-area: nav3;
+    display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
   }
@@ -50,17 +65,18 @@ div.tooltip {
     .grid-container{
       width: 100%;
       height: 900px;
-      grid-template-areas: "nav nav nav nav nav nav nav nav nav nav nav nav"
-      "chart chart chart chart chart chart map map map map map map"
-      "chart chart chart chart chart chart map map map map map map"
-      "chart chart chart chart chart chart map map map map map map"
-      "chart chart chart chart chart chart map map map map map map"
-      "chart chart chart chart chart chart map map map map map map"
-      "chart chart chart chart chart chart map map map map map map"
-      "chart chart chart chart chart chart map map map map map map"
-      "chart chart chart chart chart chart map map map map map map"
-      "chart chart chart chart chart chart map map map map map map"
-      "chart chart chart chart chart chart map map map map map map"
-      "chart chart chart chart chart chart map map map map map map";
+      grid-template-areas: ". . . .  nav1 nav2 nav3 . . . . ."
+      ". chart chart chart chart chart map map map map map map"
+      ". chart chart chart chart chart map map map map map map"
+      ". chart chart chart chart chart map map map map map map"
+      ". chart chart chart chart chart map map map map map map"
+      ". chart chart chart chart chart map map map map map map"
+      ". chart chart chart chart chart map map map map map map"
+      ". chart chart chart chart chart map map map map map map"
+      ". chart chart chart chart chart map map map map map map"
+      ". chart chart chart chart chart map map map map map map"
+      ". chart chart chart chart chart map map map map map map"
+      ". chart chart chart chart chart map map map map map map"
+      ". chart chart chart chart chart map map map map map map";
     }
 }
